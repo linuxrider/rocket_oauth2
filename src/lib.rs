@@ -564,7 +564,7 @@ impl<K: 'static> OAuth2<K> {
         // Unfortunate allocations, but necessary because on_attach requires 'static
         let config_name = config_name.to_string();
 
-        AdHoc::on_attach("OAuth Init", |rocket| async move {
+        AdHoc::try_on_ignite("OAuth Init", |rocket| async move {
             let config = match OAuthConfig::from_figment(rocket.figment(), &config_name) {
                 Ok(c) => c,
                 Err(e) => {
@@ -613,7 +613,7 @@ impl<K: 'static> OAuth2<K> {
             _k: PhantomData,
         };
 
-        AdHoc::on_attach("OAuth Mount", |rocket| async {
+        AdHoc::try_on_ignite("OAuth Mount", |rocket| async {
             Ok(rocket.manage(Arc::new(shared)))
         })
     }
